@@ -18,7 +18,7 @@ import java.util.TimerTask;
 
 class KioskWebViewClient extends WebViewClient {
 
-    private boolean enableCaching = false;
+    private boolean enableCaching = true;
     private Activity activity;
 
     public KioskWebViewClient(final Activity activity) {

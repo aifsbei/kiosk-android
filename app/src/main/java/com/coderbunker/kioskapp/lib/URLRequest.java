@@ -5,6 +5,8 @@ import android.os.Environment;
 import android.os.StrictMode;
 import android.util.Log;
 
+import com.coderbunker.kioskapp.KioskApplication;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -91,7 +93,7 @@ public class URLRequest {
 
         @Override
         protected String doInBackground(String... arg0) {
-            downloadFile(arg0[0], arg0[1]);
+            downloadFile( arg0[0], arg0[1]);
             return null;
         }
 
@@ -108,26 +110,31 @@ public class URLRequest {
 
     private static void downloadFile(String fileURL, String fileName) {
         try {
-            String rootDir = Environment.getExternalStorageDirectory()
-                    + File.separator + "Video";
-            File rootFile = new File(rootDir);
-            rootFile.mkdir();
+            File rootFile = new File(KioskApplication.getAppContext().getFilesDir(), "Video");
+            if (!rootFile.exists()) rootFile.mkdirs();
+
             URL url = new URL(fileURL);
             HttpURLConnection c = (HttpURLConnection) url.openConnection();
             c.setRequestMethod("GET");
-            c.setDoOutput(true);
             c.connect();
-            FileOutputStream f = new FileOutputStream(new File(rootFile,
-                    fileName));
+
+            File outFile = new File(rootFile, fileName);
+            FileOutputStream f = new FileOutputStream(outFile);
+
             InputStream in = c.getInputStream();
             byte[] buffer = new byte[1024];
-            int len1 = 0;
-            while ((len1 = in.read(buffer)) > 0) {
-                f.write(buffer, 0, len1);
+            int len;
+            while ((len = in.read(buffer)) > 0) {
+                f.write(buffer, 0, len);
             }
             f.close();
+            in.close();
+
+            Log.d("Download", "Saved to " + outFile.getAbsolutePath());
         } catch (IOException e) {
-            Log.d("Error....", e.toString());
+            Log.e("Download", "Error: " + e, e);
         }
     }
+
+
 }

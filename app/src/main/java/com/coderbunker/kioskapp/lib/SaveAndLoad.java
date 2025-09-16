@@ -5,6 +5,8 @@ import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -32,17 +34,18 @@ public class SaveAndLoad {
     }
 
     public static String readFromFile(String filename, Context context) {
-
         String ret = "";
 
         try {
-            InputStream inputStream = context.openFileInput(filename);
+            InputStream inputStream;
+            File file = new File(new File(context.getFilesDir(), "Video"), filename);
+            inputStream = new FileInputStream(file);
 
             if (inputStream != null) {
                 InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                String receiveString = "";
                 StringBuilder stringBuilder = new StringBuilder();
+                String receiveString;
 
                 while ((receiveString = bufferedReader.readLine()) != null) {
                     stringBuilder.append(receiveString);
@@ -51,27 +54,23 @@ public class SaveAndLoad {
                 inputStream.close();
                 ret = stringBuilder.toString();
             }
-        } catch (FileNotFoundException e) {
-            Log.e("login activity", "File not found: " + e.toString());
         } catch (IOException e) {
-            Log.e("login activity", "Can not read file: " + e.toString());
+            Log.e("readFromFile", "Error reading file: " + e.toString());
         }
 
         return ret;
     }
 
     public static InputStream readFromFileAndReturnInputStream(String filename, Context context) {
-
-        String ret = "";
-
         try {
-            InputStream inputStream = context.openFileInput(filename);
-            return inputStream;
+            File file = new File(new File(context.getFilesDir(), "Video"), filename);
+            return new FileInputStream(file);
         } catch (FileNotFoundException e) {
-            Log.e("login activity", "File not found: " + e.toString());
+            Log.e("readFromFile", "File not found: " + e.toString());
         }
         return null;
     }
+
 
     public static String getMimeType(String url) {
         String type = null;
