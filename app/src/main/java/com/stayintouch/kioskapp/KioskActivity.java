@@ -34,8 +34,7 @@ public class KioskActivity extends Activity {
     private Dialog passwordDialog;
 
     private KioskWebViewClient webViewClient;
-    private AutoWebViewReloader autoWebViewReloader;
-    private ReloadScheduler reloadScheduler;
+    private ReloadTimer reloadTimer;
 
     @Override
     public void onBackPressed() {
@@ -62,7 +61,7 @@ public class KioskActivity extends Activity {
 
         webView = findViewById(R.id.webview);
 
-        webViewClient = new KioskWebViewClient(this);
+        webViewClient = new KioskWebViewClient();
         webView.setWebViewClient(webViewClient);
 
         webView.getSettings().setJavaScriptEnabled(true);
@@ -72,24 +71,16 @@ public class KioskActivity extends Activity {
         webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
         hideSystemUI(webView);
 
-        reloadScheduler = new ReloadScheduler();
-
-        webView.post(new Runnable() {
-            @Override
-            public void run() {
-                autoWebViewReloader = new AutoWebViewReloader(webView);
-                autoWebViewReloader.register(KioskActivity.this);
-            }
-        });
-
         Configuration.withLocalConfig(context, new Configuration.OnConfigChanged() {
             @Override
             public void OnConfigChanged(Configuration configuration) {
                 String url = configuration.getUrl();
+                webViewClient.loadConfiguration(configuration);
                 webView.loadUrl(url);
                 Log.d("KioskActivity", "withLocalConfig: config fetched");
-                reloadScheduler.scheduleReload(context, configuration.getCacheLifetime());              // Планируем задачу
-                reloadScheduler.registerActivityReload(context);
+
+                reloadTimer = new ReloadTimer(context, configuration.getCacheLifetime());
+                reloadTimer.start();
 
                 String otp = configuration.getPassphrase();
 
@@ -235,11 +226,9 @@ public class KioskActivity extends Activity {
 
     @Override
     protected void onDestroy() {
-        if (autoWebViewReloader != null) {
-            autoWebViewReloader.deregister(this);
-        }
         passwordDialog.dismiss();
-        reloadScheduler.unregister(this);
+        reloadTimer.stop();
+        webViewClient.dispose();
         super.onDestroy();
     }
 }

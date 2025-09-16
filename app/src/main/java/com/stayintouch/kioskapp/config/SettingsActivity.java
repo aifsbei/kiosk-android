@@ -44,6 +44,7 @@ public class SettingsActivity extends Activity {
         Button btnClearCache = findViewById(R.id.clearCacheBtn);
         final EditText cacheLifetimeInputHours = findViewById(R.id.cacheLifetimeInputHours);
         final EditText cacheLifetimeInputMinutes = findViewById(R.id.cacheLifetimeInputMinutes);
+        final EditText retryInput = findViewById(R.id.retryInput);
 
         cacheLifetimeInputHours.addTextChangedListener(
                 new TextWatcher() {
@@ -71,6 +72,26 @@ public class SettingsActivity extends Activity {
                     @Override
                     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                         updateCacheLifetime(charSequence.toString(), cacheLifetimeInputHours.getText().toString());
+                    }
+                }
+        );
+
+        retryInput.addTextChangedListener(
+                new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+                    @Override
+                    public void afterTextChanged(Editable editable) {}
+
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                        try {
+                            int value = charSequence.toString().isEmpty() ? 0 : Integer.parseInt(charSequence.toString());
+                            configuration.setRetryDelay(value * 1000L);
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
         );
@@ -134,6 +155,7 @@ public class SettingsActivity extends Activity {
                 int[] hoursAndMinutes = TimeUtils.getHoursAndMinutesFromMillis(configuration.getCacheLifetime());
                 cacheLifetimeInputHours.setText(String.valueOf(hoursAndMinutes[0]));
                 cacheLifetimeInputMinutes.setText(String.valueOf(hoursAndMinutes[1]));
+                retryInput.setText(String.valueOf(configuration.getRetryDelay() / 1000));
 
                 if (otp == null) {
                     otp = new ConfigEncrypter().hashPassphrase("123456");
