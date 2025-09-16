@@ -12,6 +12,10 @@ buildscript {
     }
 }
 
+ext {
+    buildToolsVersion = '27'
+}
+
 allprojects {
     repositories {
         google()
