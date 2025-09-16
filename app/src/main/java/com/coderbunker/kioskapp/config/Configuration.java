@@ -129,6 +129,12 @@ public class Configuration {
         }
     }
 
+
+    public static void withLocalConfig(Context context, DatabaseConnection.OnConfigChanged onConfigChanged) {
+        Configuration localConfig = loadFromPreferences(context);
+        onConfigChanged.OnConfigChanged(localConfig);
+    }
+
     public static void withConfigFromServer(Context context, DatabaseConnection.OnConfigChanged onConfigChanged) {
         DatabaseConnection databaseConnection = new DatabaseConnection();
         Configuration localConfig = loadFromPreferences(context);

@@ -88,7 +88,7 @@ public class KioskActivity extends Activity {
             }
         });
 
-        Configuration.onConfigChanges(context, new DatabaseConnection.OnConfigChanged() {
+        Configuration.withLocalConfig(context, new DatabaseConnection.OnConfigChanged() {
             @Override
             public void OnConfigChanged(Configuration configuration) {
                 String url = configuration.getUrl();

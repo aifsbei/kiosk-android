@@ -60,7 +60,7 @@ public class SettingsActivity extends Activity {
             }
         });
 
-        Configuration.withConfigFromServer(this, new DatabaseConnection.OnConfigChanged() {
+        Configuration.withLocalConfig(this, new DatabaseConnection.OnConfigChanged() {
             @Override
             public void OnConfigChanged(final Configuration configuration) {
                 SettingsActivity.this.configuration = configuration;
