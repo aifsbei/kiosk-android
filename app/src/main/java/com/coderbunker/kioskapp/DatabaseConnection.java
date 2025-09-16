@@ -1,11 +1,15 @@
 package com.coderbunker.kioskapp;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.coderbunker.kioskapp.config.ConfigEncrypter;
 import com.coderbunker.kioskapp.config.Configuration;
 import com.coderbunker.kioskapp.config.encryption.EncryptionException;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -16,7 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseConnection {
+
+    public static final int FIREBASE_CONFIG_FETCH_TIMEOUT_MS = 30_000;
+
     private FirebaseDatabase database;
+
+    private Handler timeoutHandler = new Handler(Looper.getMainLooper());
 
 
     public DatabaseConnection() {
@@ -73,13 +82,39 @@ public class DatabaseConnection {
         void onViewersReceived(List<Viewer> viewers);
     }
 
-    public void getConfiguration(final String passphrase, String uuid, final Context context, final OnConfigChanged onConfigChanged, boolean callOnce) {
-        DatabaseReference configurationReference = getConfigurationReferences();
-        DatabaseReference device = configurationReference.child(uuid);
+    public void getConfiguration(final String passphrase, String uuid, final Context context,
+                                 final OnConfigChanged onConfigChanged, boolean callOnce) {
+        if (!isFirebaseInitialized()) {
+            onConfigChanged.OnConfigChanged(replaceConfigWithLocal(context));
+            return;
+        }
+
+        DatabaseReference device = getConfigurationReferences().child(uuid);
+
+        final ConfigValueEventListener listener = new ConfigValueEventListener(passphrase, context, onConfigChanged);
         if (callOnce) {
-            device.addListenerForSingleValueEvent(new ConfigValueEventListener(passphrase, context, onConfigChanged));
+            device.addListenerForSingleValueEvent(listener);
         } else {
-            device.addValueEventListener(new ConfigValueEventListener(passphrase, context, onConfigChanged));
+            device.addValueEventListener(listener);
+        }
+
+        timeoutHandler.postDelayed(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        onConfigChanged.OnConfigChanged(replaceConfigWithLocal(context));
+                    }
+                },
+                FIREBASE_CONFIG_FETCH_TIMEOUT_MS
+        );
+    }
+
+    private boolean isFirebaseInitialized() {
+        try {
+            FirebaseApp.getInstance();
+            return true;
+        } catch (IllegalStateException e) {
+            return false;
         }
     }
 
@@ -121,6 +156,7 @@ public class DatabaseConnection {
 
         @Override
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            timeoutHandler.removeCallbacksAndMessages(null);
             String value = dataSnapshot.child("configuration").getValue(String.class);
             Configuration configuration = null;
             try {
@@ -138,7 +174,8 @@ public class DatabaseConnection {
 
         @Override
         public void onCancelled(@NonNull DatabaseError databaseError) {
-
+            timeoutHandler.removeCallbacksAndMessages(null);
+            Log.e("DatabaseConnection", "database error");
         }
     }
 }
