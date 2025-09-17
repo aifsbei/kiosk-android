@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.coderbunker.kioskapp.DatabaseConnection;
+import com.coderbunker.kioskapp.KioskApplication;
 import com.coderbunker.kioskapp.config.encryption.EncryptionException;
 import com.coderbunker.kioskapp.MainActivity;
 import com.coderbunker.kioskapp.R;
@@ -27,6 +29,8 @@ import com.google.zxing.qrcode.QRCodeWriter;
 
 import static android.widget.Toast.LENGTH_LONG;
 
+import java.io.File;
+
 public class SettingsActivity extends Activity {
 
     private Context context = this;
@@ -34,6 +38,8 @@ public class SettingsActivity extends Activity {
     private ImageView imgQRCode, imgQRCodeHOTP;
     private TextView lblCurrentHOTPCycle;
     private Button btnSave;
+    private Button btnToggleKioskMode;
+    private Button btnClearCache;
 
     private String otp_uri, hotp_uri;
 
@@ -50,6 +56,8 @@ public class SettingsActivity extends Activity {
         imgQRCodeHOTP = findViewById(R.id.imgQRCodeHOTP);
         editURL = findViewById(R.id.editText_URL);
         btnSave = findViewById(R.id.btnSave);
+        btnToggleKioskMode = findViewById(R.id.toggleKioskModeBtn);
+        btnClearCache = findViewById(R.id.clearCacheBtn);
         lblCurrentHOTPCycle = findViewById(R.id.current_hotp_cycle);
 
         Button claimTabletBtn = findViewById(R.id.claimTabletBtn);
@@ -57,6 +65,31 @@ public class SettingsActivity extends Activity {
             @Override
             public void onClick(View v) {
                 new ClaimDialog(SettingsActivity.this).show();
+            }
+        });
+
+        btnToggleKioskMode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    if (KioskApplication.isTaskLocked) {
+                        stopLockTask();
+                        Toast.makeText(context, "Task unlocked", Toast.LENGTH_SHORT).show();
+                    } else {
+                        startLockTask();
+                        Toast.makeText(context, "Task locked", Toast.LENGTH_SHORT).show();
+                    }
+                    KioskApplication.isTaskLocked = !KioskApplication.isTaskLocked;
+                }
+            }
+        });
+
+        btnClearCache.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                File file = new File(context.getFilesDir(), "Video");
+                FileUtils.deleteRecursive(file);
+                Toast.makeText(context, "Cache cleared!", Toast.LENGTH_SHORT).show();
             }
         });
 

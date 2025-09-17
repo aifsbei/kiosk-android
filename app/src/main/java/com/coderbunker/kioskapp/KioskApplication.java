@@ -16,4 +16,6 @@ public class KioskApplication extends Application {
     public static Context getAppContext() {
         return instance.getApplicationContext();
     }
+
+    public static Boolean isTaskLocked = false;
 }

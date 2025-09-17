@@ -16,13 +16,15 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="20dp">
 
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -98,6 +100,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Claim Tablet" />
+
+            <Button
+                android:id="@+id/toggleKioskModeBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Toggle Kiosk mode" />
+
+            <Button
+                android:id="@+id/clearCacheBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Clear cache" />
 
             <TextView
                 android:id="@+id/textView_URL"
