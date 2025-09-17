@@ -4,12 +4,18 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
+import android.os.BatteryManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -58,6 +64,7 @@ public class KioskActivity extends Activity {
 
         removeTitleBar();
         doNotLockScreen();
+        setupLockTask();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
 
         statusBarLocker = new StatusBarLocker(this);
@@ -175,6 +182,52 @@ public class KioskActivity extends Activity {
                     finish();
                 }
             });
+        }
+    }
+
+    private void setupLockTask() {
+        ComponentName mAdminComponentName = KioskDeviceAdminReceiver.getComponentName(this);
+        DevicePolicyManager mDevicePolicyManager = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
+        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_MAIN);
+        intentFilter.addCategory(Intent.CATEGORY_HOME);
+        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mDevicePolicyManager.addPersistentPreferredActivity(
+                    mAdminComponentName,
+                    intentFilter,
+                    new ComponentName(getPackageName(), KioskActivity.class.getName())
+            );
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            String packageName = context.getPackageName();
+            mDevicePolicyManager.setLockTaskPackages(mAdminComponentName, new String[] { packageName });
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                mDevicePolicyManager.setKeyguardDisabled(mAdminComponentName, true);
+            }
+            mDevicePolicyManager.setGlobalSetting(
+                    mAdminComponentName,
+                    Settings.Global.STAY_ON_WHILE_PLUGGED_IN,
+                    String.valueOf(
+                            (BatteryManager.BATTERY_PLUGGED_AC
+                                    | BatteryManager.BATTERY_PLUGGED_USB
+                                    | BatteryManager.BATTERY_PLUGGED_WIRELESS)
+                    )
+            );
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            getWindow().getDecorView().setSystemUiVisibility(
+                    (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+            );
+            getWindow().setFlags(
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN
+            );
+            startLockTask();
+            KioskApplication.isTaskLocked = true;
         }
     }
 
