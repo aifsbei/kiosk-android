@@ -58,7 +58,8 @@
             android:background="#fff"
             android:elevation="4dp"
             android:text="Statistics"
-            android:textColor="#000" />
+            android:textColor="#000"
+            android:visibility="gone" />
     </RelativeLayout>
 
 
