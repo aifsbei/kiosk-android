@@ -58,7 +58,7 @@ public class KioskActivity extends Activity {
 
         removeTitleBar();
         doNotLockScreen();
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
 
         statusBarLocker = new StatusBarLocker(this);
         statusBarLocker.lock();

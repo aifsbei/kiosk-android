@@ -30,12 +30,12 @@
         android:name=".KioskApplication">
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="landscape">
+            android:screenOrientation="reverseLandscape">
 
         </activity>
         <activity
             android:name=".KioskActivity"
-            android:screenOrientation="landscape">
+            android:screenOrientation="reverseLandscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -47,10 +47,10 @@
 
         <activity
             android:name=".config.SettingsActivity"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="reverseLandscape" />
         <activity
             android:name=".StatisticsActivity"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="reverseLandscape" />
     </application>
 
 </manifest>
