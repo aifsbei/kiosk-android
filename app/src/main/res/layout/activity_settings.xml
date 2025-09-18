@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#FFF"
     android:orientation="vertical"
-    tools:context=".config.SettingsActivity">
+    tools:context="com.stayintouch.kioskapp.config.SettingsActivity">
 
     <ScrollView
         android:id="@+id/scrollView"
@@ -19,87 +19,11 @@
             android:orientation="vertical"
             android:padding="20dp">
 
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:visibility="gone">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/textView_otp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center_horizontal"
-                        android:paddingVertical="20dp"
-                        android:text="Time based"
-                        android:textColor="@android:color/black"
-                        android:textSize="22dp" />
-
-                    <ImageView
-                        android:id="@+id/imgQRCode"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:src="@drawable/ic_launcher_background" />
-
-                    <TextView
-                        android:id="@+id/placeholder"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textAlignment="center" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/textView_hotp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center_horizontal"
-                        android:paddingVertical="20dp"
-                        android:text="Counter based"
-                        android:textColor="@android:color/black"
-                        android:textSize="22dp" />
-
-                    <ImageView
-                        android:id="@+id/imgQRCodeHOTP"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:src="@drawable/ic_launcher_background" />
-
-                    <TextView
-                        android:id="@+id/current_hotp_cycle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Current cycle: ---"
-                        android:textAlignment="center" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
             <Button
                 android:id="@+id/claimTabletBtn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Claim Tablet" />
+                android:text="Setup password" />
 
             <Button
                 android:id="@+id/toggleKioskModeBtn"

@@ -12,29 +12,6 @@
 
     </WebView>
 
-
-    <FrameLayout
-        android:id="@+id/camera_preview"
-        android:layout_width="1dp"
-        android:layout_height="1dp"
-        android:visibility="visible">
-
-    </FrameLayout>
-
-    <TextView
-        android:id="@+id/face_counter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:background="#000"
-        android:text="Current faces: 0"
-        android:textColor="#FFF"
-        android:textSize="18sp"
-        android:visibility="gone"
-        tools:layout_editor_absoluteX="758dp"
-        tools:layout_editor_absoluteY="1123dp" />
-
 </RelativeLayout>
 
 

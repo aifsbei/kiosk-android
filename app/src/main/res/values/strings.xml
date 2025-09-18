@@ -3,9 +3,5 @@
     <string name="admin_description">Admin Receiver</string>
 
     <string name="title_activity_kiosk">KioskActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="noInternetConnection">No internet connection.</string>
-    <string name="viewersLabel">Viewers</string>
-    <string name="secondsOfVideo">Seconds of Video</string>
 </resources>
