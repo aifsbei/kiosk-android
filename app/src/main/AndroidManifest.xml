@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.coderbunker.kioskapp">
+    package="com.coderbunker.kioskapp"
+    android:installLocation="internalOnly">
 
     <!-- Give permission to use Internet -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -14,6 +15,8 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.ACTION_MANAGE_OVERLAY_PERMISSION" />
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.QUICKBOOT_POWERON" />
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -63,6 +66,15 @@
                 android:resource="@xml/device_admin_receiver" />
             <intent-filter>
                 <action android:name="android.app.action.DEVICE_ADMIN_ENABLED"/>
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".BootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
+                <action android:name="android.htc.intent.action.QUICKBOOT_POWERON"/>
             </intent-filter>
         </receiver>
     </application>
