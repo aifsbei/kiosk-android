@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.coderbunker.kioskapp.config.ConfigEncrypter;
 import com.coderbunker.kioskapp.config.Configuration;
 import com.coderbunker.kioskapp.config.encryption.EncryptionException;
 import com.coderbunker.kioskapp.lib.HOTP;
@@ -89,13 +90,19 @@ public class PasswordDialog extends Dialog {
         c.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (cptPwd > 0) {
-                    cptPwd--;
-                    enterNumber("");
-                    cptPwd--;
-                }
+                cptPwd = 0;
+                clearNumber();
             }
         });
+    }
+
+    public void clearNumber() {
+        b1.setText("");
+        b2.setText("");
+        b3.setText("");
+        b4.setText("");
+        b5.setText("");
+        b6.setText("");
     }
 
     public void enterNumber(String number) {
@@ -150,8 +157,14 @@ public class PasswordDialog extends Dialog {
                     String pwd = b1.getText().toString() + b2.getText().toString() + b3.getText().toString() + b4.getText().toString() + b5.getText().toString() + b6.getText().toString();
                     String generated_number = TOTP.generateCurrentNumber(otp, System.currentTimeMillis());
                     String previous_generated_number = TOTP.generateCurrentNumber(otp, System.currentTimeMillis() - 30000);
+                    String pwdHash = new ConfigEncrypter().hashPassphrase(pwd);
 
-                    if ("123456".equals(pwd)) {
+                    if (otp.isEmpty() && "123456".equals(pwd)) {
+                        launchRunnable();
+                        return;
+                    }
+
+                    if (otp.equals(pwdHash)) {
                         launchRunnable();
                         return;
                     }
