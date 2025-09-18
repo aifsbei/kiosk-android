@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">KioskApp</string>
+    <string name="app_name">Stay In Touch</string>
     <string name="admin_description">Admin Receiver</string>
 
     <string name="title_activity_kiosk">KioskActivity</string>
