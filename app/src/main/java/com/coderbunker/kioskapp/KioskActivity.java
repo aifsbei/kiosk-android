@@ -51,6 +51,9 @@ public class KioskActivity extends Activity {
     private AutoWebViewReloader autoWebViewReloader;
     private StatusBarLocker statusBarLocker;
 
+    // debug only
+    // private final TrafficMonitor trafficMonitor = new TrafficMonitor(this, 1000);
+
     @Override
     public void onBackPressed() {
         //on back pressed
@@ -66,6 +69,9 @@ public class KioskActivity extends Activity {
         doNotLockScreen();
         setupLockTask();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+
+        // debug only
+        // trafficMonitor.start();
 
         statusBarLocker = new StatusBarLocker(this);
         statusBarLocker.lock();
