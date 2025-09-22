@@ -19,7 +19,7 @@ public class Configuration {
     private Configuration(Context context) {
         preferences = context.getSharedPreferences(
                 NAME, Context.MODE_PRIVATE);
-        url = preferences.getString("url", "http://f1169204.xsph.ru/index.html?video=1");
+        url = preferences.getString("url", "https://adv.stayintouch.ru/index.html?video=1");
         passphrase = preferences.getString("passphrase", null); //TODO change def value
     }
 
