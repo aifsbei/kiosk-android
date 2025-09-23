@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.URLUtil;
@@ -15,6 +17,7 @@ import android.widget.Toast;
 import com.stayintouch.kioskapp.KioskApplication;
 import com.stayintouch.kioskapp.MainActivity;
 import com.stayintouch.kioskapp.R;
+import com.stayintouch.kioskapp.lib.TimeUtils;
 
 import static android.widget.Toast.LENGTH_LONG;
 
@@ -39,6 +42,38 @@ public class SettingsActivity extends Activity {
         btnSave = findViewById(R.id.btnSave);
         Button btnToggleKioskMode = findViewById(R.id.toggleKioskModeBtn);
         Button btnClearCache = findViewById(R.id.clearCacheBtn);
+        final EditText cacheLifetimeInputHours = findViewById(R.id.cacheLifetimeInputHours);
+        final EditText cacheLifetimeInputMinutes = findViewById(R.id.cacheLifetimeInputMinutes);
+
+        cacheLifetimeInputHours.addTextChangedListener(
+                new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+                    @Override
+                    public void afterTextChanged(Editable editable) {}
+
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                        updateCacheLifetime(cacheLifetimeInputMinutes.getText().toString(), charSequence.toString());
+                    }
+                }
+        );
+
+        cacheLifetimeInputMinutes.addTextChangedListener(
+                new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+                    @Override
+                    public void afterTextChanged(Editable editable) {}
+
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                        updateCacheLifetime(charSequence.toString(), cacheLifetimeInputHours.getText().toString());
+                    }
+                }
+        );
 
         Button claimTabletBtn = findViewById(R.id.claimTabletBtn);
         claimTabletBtn.setOnClickListener(new View.OnClickListener() {
@@ -96,12 +131,26 @@ public class SettingsActivity extends Activity {
 
                 editURL.setText(url);
 
+                int[] hoursAndMinutes = TimeUtils.getHoursAndMinutesFromMillis(configuration.getCacheLifetime());
+                cacheLifetimeInputHours.setText(String.valueOf(hoursAndMinutes[0]));
+                cacheLifetimeInputMinutes.setText(String.valueOf(hoursAndMinutes[1]));
+
                 if (otp == null) {
                     otp = new ConfigEncrypter().hashPassphrase("123456");
                     configuration.setPassphrase(otp);
                 }
             }
         });
+    }
+
+    private void updateCacheLifetime(String minutes, String hours) {
+        try {
+            int hoursValue = hours.isEmpty() ? 0 : Integer.parseInt(hours);
+            int minutesValue = minutes.isEmpty() ? 0 : Integer.parseInt(minutes);
+            configuration.setCacheLifetime((hoursValue * 60L + minutesValue) * 60L * 1000L);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

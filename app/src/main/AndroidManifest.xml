@@ -74,6 +74,10 @@
                 <action android:name="android.htc.intent.action.QUICKBOOT_POWERON"/>
             </intent-filter>
         </receiver>
+        <receiver
+            android:name=".ReloadScheduler$ReloadReceiver"
+            android:exported="true">
+        </receiver>
     </application>
 
 </manifest>

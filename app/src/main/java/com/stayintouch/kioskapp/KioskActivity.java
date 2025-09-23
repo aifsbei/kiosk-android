@@ -13,6 +13,7 @@ import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -27,16 +28,14 @@ import com.stayintouch.kioskapp.config.SettingsActivity;
 
 public class KioskActivity extends Activity {
 
-    private final Context context = this;
+    private final Activity context = this;
     private WebView webView;
 
     private Dialog passwordDialog;
 
     private KioskWebViewClient webViewClient;
     private AutoWebViewReloader autoWebViewReloader;
-
-    // debug only
-    // private final TrafficMonitor trafficMonitor = new TrafficMonitor(this, 1000);
+    private ReloadScheduler reloadScheduler;
 
     @Override
     public void onBackPressed() {
@@ -55,6 +54,7 @@ public class KioskActivity extends Activity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
 
         // debug only
+        // TrafficMonitor trafficMonitor = new TrafficMonitor(this, 1000);
         // trafficMonitor.start();
 
         setContentView(R.layout.activity_kiosk);
@@ -72,6 +72,7 @@ public class KioskActivity extends Activity {
         webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
         hideSystemUI(webView);
 
+        reloadScheduler = new ReloadScheduler();
 
         webView.post(new Runnable() {
             @Override
@@ -86,6 +87,9 @@ public class KioskActivity extends Activity {
             public void OnConfigChanged(Configuration configuration) {
                 String url = configuration.getUrl();
                 webView.loadUrl(url);
+                Log.d("KioskActivity", "withLocalConfig: config fetched");
+                reloadScheduler.scheduleReload(context, configuration.getCacheLifetime());              // Планируем задачу
+                reloadScheduler.registerActivityReload(context);
 
                 String otp = configuration.getPassphrase();
 
@@ -235,6 +239,7 @@ public class KioskActivity extends Activity {
             autoWebViewReloader.deregister(this);
         }
         passwordDialog.dismiss();
+        reloadScheduler.unregister(this);
         super.onDestroy();
     }
 }

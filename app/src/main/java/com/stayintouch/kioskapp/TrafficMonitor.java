@@ -11,9 +11,6 @@ public class TrafficMonitor {
     private final Handler handler;
     private final int intervalMs;
 
-    private long rxStart;
-    private long txStart;
-
     private boolean isRunning = false;
 
     private final Runnable monitorRunnable = new Runnable() {
@@ -24,10 +21,7 @@ public class TrafficMonitor {
             long rxCurrent = TrafficStats.getUidRxBytes(uid);
             long txCurrent = TrafficStats.getUidTxBytes(uid);
 
-            long rxUsed = rxCurrent - rxStart;
-            long txUsed = txCurrent - rxStart;
-
-            Log.d("Traffic Monitor", String.format("Traffic since start: rx = %.2f MB; tx = %.2f MB", bytesToMB(rxUsed), bytesToMB(txUsed)));
+            Log.d("Traffic Monitor", String.format("Traffic since start: rx = %.2f MB; tx = %.2f MB", bytesToMB(rxCurrent), bytesToMB(txCurrent)));
 
             handler.postDelayed(this, intervalMs);
         }
